@@ -1,0 +1,65 @@
+name: Build
+
+on:
+  push:
+  schedule:
+    - cron: "0 0 * * 0"
+
+env:
+  BBR_REPO: google/bbr
+  BBR_BRANCH: v3
+
+jobs:
+  keep-schedule:
+    uses: WaterLemons2k/scheduled-workflow-activity-action/.github/workflows/reusable.yml@v1
+
+  check:
+    runs-on: ubuntu-latest
+    env:
+      FILE: commit
+    outputs:
+      commit: ${{ steps.check.outputs.commit }}
+      hit: ${{ steps.cache.outputs.cache-hit == 'true' }}
+    steps:
+      - name: Check
+        id: check
+        run: echo "commit=$(git ls-remote https://github.com/${{ env.BBR_REPO }} ${{ env.BBR_BRANCH }} | cut -f 1)" >> $GITHUB_OUTPUT
+
+      - name: Cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.FILE }}
+          key: ${{ steps.check.outputs.commit }}
+
+      - name: Save
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: echo ${{ steps.check.outputs.commit }} | tee ${{ env.FILE }}
+
+  build:
+    needs: check
+    if: needs.check.outputs.hit == 'false'
+    runs-on: ubuntu-latest
+    container: ghcr.io/waterlemons2k/linux-deps:buster
+    steps:
+      - name: Checkout BBR
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.BBR_REPO }}
+          ref: ${{ env.BBR_BRANCH }}
+
+      - name: Fetch certs and configs
+        run: |
+          curl -fLO https://github.com/${{ github.repository }}/raw/${{ github.sha }}/{certs/debian-uefi-certs.pem,configs/.config}
+
+          echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: make -j$(nproc) LOCALVERSION= bindeb-pkg
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.DATE }}
+          body: Based on google/bbr@${{ needs.check.outputs.commit }}.
+          files: ../*.deb
