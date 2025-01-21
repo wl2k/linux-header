@@ -12,7 +12,7 @@ jobs:
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
       - run: |
-          make oldconfig
+          make defconfig oldconfig
 
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
@@ -20,7 +20,7 @@ jobs:
         run: make -j$(nproc) LOCALVERSION= deb-pkg
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.DATE }}
           files: ../*.deb
