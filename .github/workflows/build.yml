@@ -12,7 +12,7 @@ jobs:
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
       - run: |
-          make defconfig
+          make olddefconfig
 
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
