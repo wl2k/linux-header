@@ -9,7 +9,7 @@ jobs:
     container: ghcr.io/waterlemons2k/linux-deps:jessie
     steps:
       - name: Checkout
-        run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git
+        run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
       - run: |
           make defconfig
