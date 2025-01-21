@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/waterlemons2k/linux-deps:buster
+    container: ghcr.io/waterlemons2k/linux-deps:jessie
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +20,7 @@ jobs:
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
       - name: Build
-        run: make -j$(nproc) LOCALVERSION= deb-pkg
+        run: make -j$(nproc) ARCH=arm LOCALVERSION= deb-pkg
 
       - name: Release
         uses: softprops/action-gh-release@v2
