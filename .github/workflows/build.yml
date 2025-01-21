@@ -26,6 +26,7 @@ jobs:
           apt-get update
           apt-get install -y --allow-unauthenticated apt-transport-https
           echo "deb https://cli.github.com/packages stable main" >/etc/apt/sources.list.d/github-cli.list
+          apt-get update
           apt-get install -y --allow-unauthenticated gh
 
           gh release create -R ${{ github.repository }} ${{ env.DATE }} ../*.deb
