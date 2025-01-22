@@ -8,16 +8,21 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/waterlemons2k/linux-deps:jessie
     steps:
+      - name: Setup toolchain
+        run: |
+          curl -O https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
+          tar xf *.xz
+          export PATH="$PATH:$PWD/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
       - name: Checkout
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
       - run: |
-          make defconfig oldconfig
+          make ARCH=arm defconfig oldconfig
 
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
       - name: Build
-        run: make -j$(nproc) LOCALVERSION= deb-pkg
+        run: make -j$(nproc) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- LOCALVERSION= deb-pkg
 
       - name: Release
         env:
