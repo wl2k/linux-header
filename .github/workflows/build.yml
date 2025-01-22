@@ -18,7 +18,9 @@ jobs:
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
       - run: |
-          make ARCH=arm defconfig oldconfig
+          make ARCH=arm multi_v7_defconfig oldconfig
+          sed -i 's/SUBLEVEL =.*/SUBLEVEL = 24/' Makefile
+          sed -i 's/EXTRAVERSION =/EXTRAVERSION = _hi3798mv310/' Makefile
 
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
