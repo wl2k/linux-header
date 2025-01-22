@@ -14,7 +14,6 @@ jobs:
           curl -LO https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
           tar xf *.xz
           rm *.xz
-          export PATH="$PATH:/opt/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
       - name: Checkout
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
@@ -24,7 +23,9 @@ jobs:
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
       - name: Build
-        run: make -j$(nproc) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- LOCALVERSION= deb-pkg
+        run: |
+          export PATH="$PATH:/opt/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
+          make -j$(nproc) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- LOCALVERSION= deb-pkg
 
       - name: Release
         env:
