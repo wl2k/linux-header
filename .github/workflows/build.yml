@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Setup toolchain
         run: |
-          curl -O https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
+          curl -LO https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
           tar xf *.xz
           export PATH="$PATH:$PWD/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
       - name: Checkout
