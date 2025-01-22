@@ -14,13 +14,13 @@ jobs:
           curl -LO https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
           tar xf *.xz
           rm *.xz
-      - name: Checkout
-        run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
+      - name: Checkout Linux
+        run: |
+          curl -O https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.24.tar.xz
+          tar xf linux-3.18.24.tar.xz --strip-components 1
 
       - run: |
           make ARCH=arm multi_v7_defconfig oldconfig
-          sed -i 's/SUBLEVEL =.*/SUBLEVEL = 24/' Makefile
-          sed -i 's/EXTRAVERSION =/EXTRAVERSION = _hi3798mv310/' Makefile
 
           echo "DATE=$(date +%F)" >> "$GITHUB_ENV"
 
