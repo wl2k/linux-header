@@ -9,10 +9,12 @@ jobs:
     container: ghcr.io/waterlemons2k/linux-deps:jessie
     steps:
       - name: Setup toolchain
+        working-directory: /opt
         run: |
           curl -LO https://releases.linaro.org/archive/14.05/components/toolchain/binaries/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu.tar.xz
           tar xf *.xz
-          export PATH="$PATH:$PWD/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
+          rm *.xz
+          export PATH="$PATH:/opt/gcc-linaro-4.9-2014.05-arm-linux-gnueabihf-x86_64-linux-gnu/bin"
       - name: Checkout
         run: git clone --depth=1 -b v3.18 https://github.com/torvalds/linux.git .
 
